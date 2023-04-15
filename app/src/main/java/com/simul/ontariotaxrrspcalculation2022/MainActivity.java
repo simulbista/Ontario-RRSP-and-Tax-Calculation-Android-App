@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.slider.Slider;
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     double taxableIncomeValue;
     double federalTaxValue;
     double provincialTaxValue;
+    double totalTaxValue;
     TextView federalTax;
     TextView provincialTax;
     TextView totalTax;
@@ -66,23 +68,52 @@ public class MainActivity extends AppCompatActivity {
 
     private void calculate() {
         //calculate rrsp limit for 2024
-        rrspLimit2024 = rrspLimit2023 - rrspContribution + rrspMaxLimit2024;
-        RRSPLimit.setText(String.valueOf(rrspLimit2024));
+        rrspLimit2024 = Math.round(rrspLimit2023 - rrspContribution + rrspMaxLimit2024 * 100.0) / 100.0;
+        RRSPLimit.setText("$" + String.valueOf(rrspLimit2024));
 
         //calculate taxable income based on rrsp contribution
         annualIncomeValue = Double.parseDouble(annualIncome.getText().toString());
-        taxableIncomeValue = annualIncomeValue - rrspContribution;
-        taxableIncome.setText(String.valueOf(taxableIncomeValue));
+
+        //RRSP rule
+        // the max value upto which your taxable amount is reduced is 18% of your annual income, rrsp beyond that wont reduce your taxable income)
+        //if you submit more than 18% as rrsp (provided that it is less than contribution room), still the taxable income remains the same
+        if(rrspContribution>0.18*annualIncomeValue){
+            taxableIncomeValue = annualIncomeValue - 0.18*annualIncomeValue;
+        }else{
+            taxableIncomeValue = annualIncomeValue - rrspContribution;
+        }
+
+        //display toast msg if rrsp amount is greater than annual income
+        if(rrspContribution>annualIncomeValue){
+            Toast.makeText(getApplicationContext(), "RRSP contribution cannot be more than the annual income!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        taxableIncome.setText("$" + String.valueOf(Math.round(taxableIncomeValue * 100.0) / 100.0));
 
         //calling method to calculate federal tax and storing the result into a variable
         federalTaxValue = calculateFederalTax(taxableIncomeValue);
-        federalTax.setText(String.valueOf(federalTaxValue));
+        federalTax.setText("$" + String.valueOf(federalTaxValue));
 
+        //calling method to calculate federal tax and storing the result into a variable
+        provincialTaxValue = calculateProvincialTax(taxableIncomeValue);
+        provincialTax.setText("$" + String.valueOf(provincialTaxValue));
+
+        //finally summing both federal and provincial tax to return the total tax to be paid
+        totalTaxValue = federalTaxValue + provincialTaxValue;
+        //rounding to 2 decimal places
+        totalTax.setText("$" + String.valueOf(Math.round(totalTaxValue * 100.0) / 100.0));
     }
 
-    private double calculateFederalTax(double taxableIncomeValue){
+    //method to calculate federal tax
+    private double calculateFederalTax(double taxableIncome){
+//        tax bracket for 2023
+//        15% on the portion of taxable income that is $53,359 or less, plus
+//        20.5% on the portion of taxable income over $53,359 up to $106,717, plus
+//        26% on the portion of taxable income over $106,717 up to $165,430, plus
+//        29% on the portion of taxable income over $165,430 up to $235,675, plus
+//        33% on the portion of taxable income over $235,675
+
         double federalTax = 0;
-        double taxableIncome = taxableIncomeValue;
 
         if (taxableIncome > 235675) {
             federalTax += 0.33 * (taxableIncome - 235675);
@@ -106,6 +137,44 @@ public class MainActivity extends AppCompatActivity {
 
         federalTax += 0.15 * taxableIncome;
 
-        return federalTax;
+        //returning federal tax rounded to 2 decimal places
+        return Math.round(federalTax * 100.0) / 100.0;
     }
+
+    //method to calculate provincial (Ontario) tax
+    private double calculateProvincialTax(double taxableIncome) {
+//        tax bracket for 2023
+//        5.05% on the portion of your taxable income that is $49,231 or less, plus
+//        9.15% on the portion of your taxable income over $49,231 up to $98,463, plus
+//        11.16% on the portion of your taxable income over $98,463 up to $150,000, plus
+//        12.16% on the portion of your taxable income over $150,000 up to $220,000, plus
+//        13.16% on the portion of your taxable income over $220,000
+
+        double provincialTax = 0;
+
+        if (taxableIncome > 220000) {
+            provincialTax += 0.1316 * (taxableIncome - 220000);
+            taxableIncome = 220000;
+        }
+
+        if (taxableIncome > 150000) {
+            provincialTax += 0.1216 * (taxableIncome - 150000);
+            taxableIncome = 150000;
+        }
+
+        if (taxableIncome > 98463) {
+            provincialTax += 0.1116 * (taxableIncome - 98463);
+            taxableIncome = 98463;
+        }
+
+        if (taxableIncome > 49231) {
+            provincialTax += 0.0915 * (taxableIncome - 49231);
+            taxableIncome = 49231;
+        }
+
+        provincialTax += 0.0505 * taxableIncome;
+
+        return Math.round(provincialTax * 100.0) / 100.0;
+    }
+
 }
