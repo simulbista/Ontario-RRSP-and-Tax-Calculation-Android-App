@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:padding="20dp">
+
+    <!--    Vertical guidelines-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glv_25pc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".25"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glv_50pc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".5" />
+
+    <!--    End of Vertical guidelines-->
+
+    <TextView
+        android:id="@+id/title_heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Tax Calculation for Ontario 2023"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/income_title"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:text="Annual Income 2022"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/title_heading"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glv_50pc"
+        android:gravity="center" />
+
+    <EditText
+        android:id="@+id/income_value"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:inputType="numberDecimal"
+        android:hint="$0"
+        app:layout_constraintTop_toBottomOf="@id/title_heading"
+        app:layout_constraintStart_toEndOf="@id/glv_50pc"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rrsp_block"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#EAF6FF"
+        app:layout_constraintTop_toBottomOf="@id/income_title"
+        android:layout_marginVertical="20dp"
+        android:padding="15dp">
+
+        <TextView
+            android:id="@+id/rrsp_title"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:text="RRSP"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/rrsp_contribution_title"
+            android:layout_width="150dp"
+            android:layout_height="55dp"
+            android:text="RRSP Contribution for 2022"
+            app:layout_constraintTop_toBottomOf="@id/rrsp_title"
+            app:layout_constraintStart_toStartOf="parent"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/rrsp_contribution_value"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:text="$0"
+            app:layout_constraintTop_toBottomOf="@id/rrsp_title"
+            app:layout_constraintStart_toEndOf="@id/rrsp_contribution_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
+            />
+
+
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/rrsp_contribution_slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:valueFrom="0.0"
+            android:valueTo="29210"
+            android:value="0.0"
+            app:layout_constraintTop_toBottomOf="@id/rrsp_contribution_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/rrsp_limit_title"
+            android:layout_width="150dp"
+            android:layout_height="55dp"
+            android:text="RRSP contribution limit for 2024"
+            app:layout_constraintTop_toBottomOf="@id/rrsp_contribution_slider"
+            app:layout_constraintStart_toStartOf="parent"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/rrsp_limit_value"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:textSize="13dp"
+            android:inputType="numberDecimal"
+            android:hint="$0"
+            app:layout_constraintTop_toBottomOf="@id/rrsp_contribution_slider"
+            app:layout_constraintStart_toEndOf="@id/rrsp_limit_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/taxable_income_title"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:text="Taxable Income"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/rrsp_block"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glv_50pc"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/taxable_income_value"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:inputType="numberDecimal"
+        android:hint="$0"
+        app:layout_constraintTop_toBottomOf="@id/rrsp_block"
+        app:layout_constraintStart_toEndOf="@id/glv_50pc"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/federal_tax_title"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:text="Federal Tax"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/taxable_income_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glv_50pc"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/federal_tax_value"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:inputType="numberDecimal"
+        android:hint="$0"
+        app:layout_constraintTop_toBottomOf="@id/taxable_income_value"
+        app:layout_constraintStart_toEndOf="@id/glv_50pc"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/provincial_tax_title"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:text="Provincial Tax"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/federal_tax_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glv_50pc"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/provincial_tax_value"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:inputType="numberDecimal"
+        android:hint="$0"
+        app:layout_constraintTop_toBottomOf="@id/federal_tax_value"
+        app:layout_constraintStart_toEndOf="@id/glv_50pc"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/total_tax_title"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:text="Total Tax to be paid"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/provincial_tax_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glv_50pc"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/total_tax_value"
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:inputType="numberDecimal"
+        android:hint="$0"
+        app:layout_constraintTop_toBottomOf="@id/provincial_tax_value"
+        app:layout_constraintStart_toEndOf="@id/glv_50pc"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/calculate"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/white"
+        android:inputType="numberDecimal"
+        android:hint="Calculate"
+        app:layout_constraintTop_toBottomOf="@id/total_tax_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center" />
+</androidx.constraintlayout.widget.ConstraintLayout>
