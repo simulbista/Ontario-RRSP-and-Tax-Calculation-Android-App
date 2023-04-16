@@ -44,7 +44,7 @@
         android:id="@+id/income_title"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:text="Annual Income 2022"
+        android:text="Annual Income 2022 ($)"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/title_heading"
         app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +88,7 @@
             android:id="@+id/rrsp_contribution_title"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:text="RRSP Contributed 2022"
+            android:text="RRSP Contributed 2023"
             app:layout_constraintTop_toBottomOf="@id/rrsp_title"
             app:layout_constraintStart_toStartOf="parent"
             android:gravity="center" />
@@ -98,6 +98,8 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:text="$0"
+            android:textStyle="bold"
+            android:textColor="#64B5F6"
             app:layout_constraintTop_toBottomOf="@id/rrsp_title"
             app:layout_constraintStart_toEndOf="@id/rrsp_contribution_title"
             app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +118,9 @@
             app:layout_constraintTop_toBottomOf="@id/rrsp_contribution_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:gravity="center"/>
+            android:gravity="center"
+            app:thumbColor="#64B5F6"
+            app:trackColor="@color/white"/>
 
         <TextView
             android:id="@+id/rrsp_limit_title"
@@ -227,6 +231,8 @@
         android:inputType="numberDecimal"
         android:hint="$0"
         android:background="#D0EBFF"
+        android:textStyle="bold"
+        android:textColor="#64B5F6"
         app:layout_constraintTop_toBottomOf="@id/provincial_tax_value"
         app:layout_constraintStart_toEndOf="@id/glv_50pc"
         app:layout_constraintEnd_toEndOf="parent"

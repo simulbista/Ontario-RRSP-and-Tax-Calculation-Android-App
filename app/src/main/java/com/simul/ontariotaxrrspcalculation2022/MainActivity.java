@@ -2,6 +2,8 @@ package com.simul.ontariotaxrrspcalculation2022;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,8 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.slider.Slider;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
     float rrspContribution;
@@ -32,10 +32,14 @@ public class MainActivity extends AppCompatActivity {
     double rrspMaxLimit2024 = 30780;
     double rrspLimit2024;
 
+    //shared preference instance
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         annualIncome = findViewById(R.id.income_value);
         contributionValue = findViewById(R.id.rrsp_contribution_value);
@@ -46,13 +50,21 @@ public class MainActivity extends AppCompatActivity {
         provincialTax = findViewById(R.id.provincial_tax_value);
         totalTax = findViewById(R.id.total_tax_value);
 
+        // Initialize shared preferences
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
+        //load saved data from the Shared Preferences and display it in UI (if it contains something)
+        if (sharedPreferences.contains("sp_annualIncome")){
+            loadSavedData();
+        }
+
         //method to take value from slider and display it back
         contributionSlider.addOnChangeListener(new Slider.OnChangeListener() {
             @Override
             public void onValueChange(Slider slider, float value, boolean fromUser) {
                 //round upto 2 decimal places
                 rrspContribution = (float) Math.round(value * 100) / 100;
-                contributionValue.setText("$" + String.valueOf(rrspContribution));
+                contributionValue.setText(String.valueOf("$ " + rrspContribution));
             }
         });
 
@@ -62,17 +74,27 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // call method to calculate rrsp limit for 2024 and the total tax (federal plus provincial)
                 calculate();
+
+                //call method to save all the input and calculated data to Shared preferences
+                saveData();
             }
         });
     }
 
     private void calculate() {
+
         //calculate rrsp limit for 2024
         rrspLimit2024 = Math.round(rrspLimit2023 - rrspContribution + rrspMaxLimit2024 * 100.0) / 100.0;
-        RRSPLimit.setText("$" + String.valueOf(rrspLimit2024));
+        RRSPLimit.setText(String.valueOf("$ " + rrspLimit2024));
 
         //calculate taxable income based on rrsp contribution
         annualIncomeValue = Double.parseDouble(annualIncome.getText().toString());
+
+        //null value check for annual income
+        if(annualIncomeValue<=0){
+            Toast.makeText(getApplicationContext(), "Annual Income should be greater than 0!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         //RRSP rule
         // the max value upto which your taxable amount is reduced is 18% of your annual income, rrsp beyond that wont reduce your taxable income)
@@ -88,20 +110,21 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "RRSP contribution cannot be more than the annual income!", Toast.LENGTH_SHORT).show();
             return;
         }
-        taxableIncome.setText("$" + String.valueOf(Math.round(taxableIncomeValue * 100.0) / 100.0));
+        taxableIncome.setText(String.valueOf("$ " + Math.round(taxableIncomeValue * 100.0) / 100.0));
 
         //calling method to calculate federal tax and storing the result into a variable
         federalTaxValue = calculateFederalTax(taxableIncomeValue);
-        federalTax.setText("$" + String.valueOf(federalTaxValue));
+        federalTax.setText(String.valueOf("$ " + federalTaxValue));
 
         //calling method to calculate federal tax and storing the result into a variable
         provincialTaxValue = calculateProvincialTax(taxableIncomeValue);
-        provincialTax.setText("$" + String.valueOf(provincialTaxValue));
+        provincialTax.setText(String.valueOf("$ " + provincialTaxValue));
 
         //finally summing both federal and provincial tax to return the total tax to be paid
         totalTaxValue = federalTaxValue + provincialTaxValue;
         //rounding to 2 decimal places
-        totalTax.setText("$" + String.valueOf(Math.round(totalTaxValue * 100.0) / 100.0));
+        totalTax.setText(String.valueOf("$ " + Math.round(totalTaxValue * 100.0) / 100.0));
+
     }
 
     //method to calculate federal tax
@@ -175,6 +198,30 @@ public class MainActivity extends AppCompatActivity {
         provincialTax += 0.0505 * taxableIncome;
 
         return Math.round(provincialTax * 100.0) / 100.0;
+    }
+
+    private void saveData() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        //saving data
+        editor.putString("sp_annualIncome", annualIncome.getText().toString());
+        editor.putString("sp_rrspContributed", contributionValue.getText().toString());
+        editor.putString("sp_rrspNextLimit", RRSPLimit.getText().toString());
+        editor.putString("sp_taxableIncome", taxableIncome.getText().toString());
+        editor.putString("sp_federalTax", federalTax.getText().toString());
+        editor.putString("sp_provincialTax", provincialTax.getText().toString());
+        editor.putString("sp_totalTax", totalTax.getText().toString());
+        editor.apply();
+    }
+
+    private void loadSavedData() {
+        //loading data back to the UI
+        annualIncome.setText(sharedPreferences.getString("sp_annualIncome", ""));
+        contributionValue.setText(sharedPreferences.getString("sp_rrspContributed", ""));
+        RRSPLimit.setText(sharedPreferences.getString("sp_rrspNextLimit", ""));
+        taxableIncome.setText(sharedPreferences.getString("sp_taxableIncome", ""));
+        federalTax.setText(sharedPreferences.getString("sp_federalTax", ""));
+        provincialTax.setText(sharedPreferences.getString("sp_provincialTax", ""));
+        totalTax.setText(sharedPreferences.getString("sp_totalTax", ""));
     }
 
 }
