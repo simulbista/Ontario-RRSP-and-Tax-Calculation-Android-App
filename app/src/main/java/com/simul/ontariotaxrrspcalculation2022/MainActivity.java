@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadSavedData();
+                Toast.makeText(getApplicationContext(), "Data loaded from shared preferences!", Toast.LENGTH_SHORT).show();
             }
         });
     }
