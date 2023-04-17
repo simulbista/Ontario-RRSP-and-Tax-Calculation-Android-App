@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import com.google.android.material.slider.Slider;
 public class MainActivity extends AppCompatActivity {
     float rrspContribution;
     Button calculateButton;
+    ImageButton refresh_button;
     TextView annualIncome;
     double annualIncomeValue;
     TextView contributionValue;
@@ -79,12 +81,21 @@ public class MainActivity extends AppCompatActivity {
                 saveData();
             }
         });
+
+        //load the shared preferences when refresh button is clicked
+        refresh_button = findViewById(R.id.refresh_button);
+        refresh_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadSavedData();
+            }
+        });
     }
 
     private void calculate() {
 
         //calculate rrsp limit for 2024
-        rrspLimit2024 = Math.round(rrspLimit2023 - rrspContribution + rrspMaxLimit2024 * 100.0) / 100.0;
+        rrspLimit2024 = Math.round((rrspLimit2023 - rrspContribution + rrspMaxLimit2024) * 100.0) / 100.0;
         RRSPLimit.setText(String.valueOf("$ " + rrspLimit2024));
 
         //calculate taxable income based on rrsp contribution
